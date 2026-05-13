@@ -1,41 +1,34 @@
 package me.bunnyking
-import net.minestom.server.MinecraftServer;
-import net.minestom.server.entity.Player;
-import net.minestom.server.event.GlobalEventHandler;
-import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
-import net.minestom.server.instance.*;
-import net.minestom.server.instance.block.Block;
-import net.minestom.server.coordinate.Pos;
 
+import net.minestom.server.MinecraftServer
+import net.minestom.server.entity.Player
+import net.minestom.server.event.GlobalEventHandler
+import net.minestom.server.event.player.AsyncPlayerConfigurationEvent
+import net.minestom.server.instance.InstanceContainer
+import net.minestom.server.instance.InstanceManager
+import net.minestom.server.instance.block.Block
+import net.minestom.server.coordinate.Pos
 
-class Main{
-static void main(String[] args) {
-    println "Server Starting Please Wait..."
+class Main {
+    static void main(String[] args) {
 
-    //initialize network and server
-    MinecraftServer MCServer = MinecraftServer.init()
-    MCServer.start("0.0 .0 .0", 25565)
+        println "Server Starting Please Wait..."
 
-    //create world
-    InstanceManager instanceManager = MinecraftServer.getInstanceManager()
-    //this is your actual world
-    InstanceContainer instanceContainer = instanceManager.createInstanceContainer()
+        def minecraftServer = MinecraftServer.init()
+        minecraftServer.start("0.0.0.0", 25565)
 
-    instanceContainer.setGenerator(unit -> unit.modifier().fillHeight(0, 40, Block.DIRT))
+        InstanceManager instanceManager = MinecraftServer.getInstanceManager()
+        InstanceContainer instanceContainer = instanceManager.createInstanceContainer()
 
-    //initialize the engine on what to do on an event
-    GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler()
-    globalEventHandler.addListener(AsyncPlayerConfigurationEvent.class, event -> {
-        Player player = event.getPlayer()
-        event.setSpawningInstance(instanceContainer)
-        event.getPlayer().setRespawnPoint(new Pos(0, 50, 0))
+        instanceContainer.setGenerator { unit ->
+            unit.modifier().fillHeight(0, 40, Block.DIRT)
+        }
 
-    })
-
-}
-
-
-
-
-
+        GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler()
+        globalEventHandler.addListener(AsyncPlayerConfigurationEvent) { event ->
+            Player player = event.player
+            event.setSpawningInstance(instanceContainer)
+            player.setRespawnPoint(new Pos(0, 50, 0))
+        }
+    }
 }
