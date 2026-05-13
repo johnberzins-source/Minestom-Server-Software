@@ -1,12 +1,16 @@
 plugins {
     id 'groovy'
+    // Adds the official GradleUp Shadow plugin
+    id 'com.gradleup.shadow' version '9.4.1'
 }
 
 group = 'me.bunnyking'
 version = '1.0-SNAPSHOT'
 
 repositories {
-    mavenCentral()
+    mavenCentral() // Recommended fallback repository
+    maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
+
 }
 
 dependencies {
@@ -14,8 +18,14 @@ dependencies {
     testImplementation platform('org.junit:junit-bom:6.0.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'net.minestom:minestom:2026.05.11-1.21.11'
 }
 
 test {
     useJUnitPlatform()
+}
+
+// Configures Shadow to merge Minestom meta-files properly
+shadowJar {
+    mergeServiceFiles()
 }
