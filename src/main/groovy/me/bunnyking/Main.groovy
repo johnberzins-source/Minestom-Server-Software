@@ -4,7 +4,6 @@ import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
 import net.minestom.server.event.GlobalEventHandler
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent
-import net.minestom.server.instance.Chunk
 import net.minestom.server.instance.InstanceContainer
 import net.minestom.server.instance.InstanceManager
 import net.minestom.server.instance.LightingChunk
@@ -29,17 +28,13 @@ class Main {
         InstanceContainer instanceContainer = instanceManager.createInstanceContainer()
         Scheduler scheduler = MinecraftServer.getSchedulerManager()
 
-        // 1. Set the chunk generator for this instance
-        instanceContainer.setGenerator(unit -> {
-            // Generate a simple flat world at y = 40
-            unit.modifier().fillHeight(0, 40, Block.GRASS_BLOCK);
-        });
+        // 1. Set the chunk generator for this instance using seperate class for advanced generation
+        new TerrainGenerator(instanceContainer)
 
         // 2. Use your custom LightingChunk implementation
         instanceContainer.setChunkSupplier((instance, chunkX, chunkZ) ->
                 new LightingChunk(instance, chunkX, chunkZ)
-        );
-
+        )
 
 
         //spawning rules
