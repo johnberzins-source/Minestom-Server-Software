@@ -4,10 +4,10 @@ import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
 import net.minestom.server.event.GlobalEventHandler
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent
+import net.minestom.server.instance.Chunk
 import net.minestom.server.instance.InstanceContainer
 import net.minestom.server.instance.InstanceManager
 import net.minestom.server.instance.LightingChunk
-import net.minestom.server.instance.anvil.AnvilLoader
 import net.minestom.server.instance.block.Block
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.timer.Scheduler
@@ -29,9 +29,18 @@ class Main {
         InstanceContainer instanceContainer = instanceManager.createInstanceContainer()
         Scheduler scheduler = MinecraftServer.getSchedulerManager()
 
-        instanceContainer.setChunkSupplier {instance, chunkX, chunkZ ->new LightingChunk(instance, chunkX, chunkZ)}
-        //load terrain
-        instanceContainer.setChunkLoader(new AnvilLoader("worlds/world"))
+        // 1. Set the chunk generator for this instance
+        instanceContainer.setGenerator(unit -> {
+            // Generate a simple flat world at y = 40
+            unit.modifier().fillHeight(0, 40, Block.GRASS_BLOCK);
+        });
+
+        // 2. Use your custom LightingChunk implementation
+        instanceContainer.setChunkSupplier((instance, chunkX, chunkZ) ->
+                new LightingChunk(instance, chunkX, chunkZ)
+        );
+
+
 
         //spawning rules
         GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler()
@@ -42,27 +51,11 @@ class Main {
 
         })
 
-
-
-
         //main tick loop for running tasks every tick
         scheduler.buildTask(() -> {
 
-            //generate terrain
-            try {
-                instanceContainer.setChunkLoader(new AnvilLoader("worlds/world"))
-            } catch (Exception ignored) {
-                println("ERROR, no world file")
-                println("Attempting to create a world")
-                instanceContainer.setGenerator { unit ->
-                    unit.modifier().fillHeight(0, 40, Block.DIRT)
-                }
-            }
-
             //save chunks
             instanceContainer.saveChunksToStorage()
-
-
 
 
         }).repeat(TaskSchedule.tick(1)).schedule()
