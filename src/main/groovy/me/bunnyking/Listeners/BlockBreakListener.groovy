@@ -9,6 +9,7 @@ import net.minestom.server.event.player.PlayerBlockBreakEvent
 import net.minestom.server.event.GlobalEventHandler
 import net.minestom.server.item.ItemStack
 
+import java.time.Duration
 
 
 @CompileStatic
@@ -26,6 +27,12 @@ class BlockBreakListener {
             ItemEntity itemEntity = new ItemEntity(itemStack)
 
             itemEntity.setInstance(player.getInstance(), player.getTargetBlockPosition(4))
+            itemEntity.spawn()
+            itemEntity.acquirable()
+            itemEntity.setPickupDelay(Duration.ofMillis(250))
+
+
+
         })
 
         globalEventHandler.addChild(node)

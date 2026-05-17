@@ -1,6 +1,6 @@
 package me.bunnyking
 import me.bunnyking.Listeners.BlockBreakListener
-
+import me.bunnyking.Listeners.PickupListener
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
 import net.minestom.server.event.GlobalEventHandler
@@ -48,6 +48,7 @@ class Main {
 
         // Initialize Listeners
         new BlockBreakListener(globalEventHandler)
+        new PickupListener(globalEventHandler)
 
 
         //main tick loop for running tasks every tick
