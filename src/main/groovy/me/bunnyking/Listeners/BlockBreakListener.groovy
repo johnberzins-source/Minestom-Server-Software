@@ -18,7 +18,6 @@ class BlockBreakListener {
     BlockBreakListener(GlobalEventHandler globalEventHandler) {
         EventNode<Event> node = EventNode.all("block-break-listener")
         node.addListener(PlayerBlockBreakEvent.class, { PlayerBlockBreakEvent event ->
-            event.getPlayer().sendMessage("You broke a block at " + event.getBlockPosition())
 
             Player player = event.getPlayer()
 
